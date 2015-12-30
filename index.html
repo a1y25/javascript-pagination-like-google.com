@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+
+	<script src="jquery.js"></script>
+
+	<style>
+		li{
+			list-style: none;
+			float: left;
+			margin-right: 10px;
+		}
+
+		.active{
+			color: red;
+		}
+
+		a{
+			cursor:pointer;
+		}
+
+		.hide{
+			display: none;
+		}
+
+		.prev{
+			display: none;
+		}
+
+		body{
+			font-family: sans-serif;
+		}
+	</style>
+</head>
+<body>
+		
+	<div class="container">		
+		<ul>
+			<li><a class="prev">Prev</a></li>
+			<div class="pages">
+				<li><a class="active" data-id="1">1</a></li>
+				<li><a data-id="2">2</a></li>
+				<li><a data-id="3">3</a></li>
+				<li><a data-id="3">4</a></li>
+				<li><a data-id="3">5</a></li>
+			</div>
+			<li><a class="next">Next</a></li>
+
+			<form action="">
+				
+				<input type="text" name="firstName" value="arjun">
+				
+				{firstName:"arjun"}
+			</form>
+		</ul>
+	</div>
+
+
+	<script>
+		
+		var totalItems = 333;
+		var displayItems = 10;
+		var totalPages = totalItems/displayItems;
+		var pageNumberCollection = [];
+		var currentPage = 1;
+		var group = [];
+		var numberOfpagesDisplay = 11;
+		var beforeAfterCount = (numberOfpagesDisplay-1)/2;
+
+
+		for(var i=1; i<=totalPages; i++ ){
+			pageNumberCollection.push(i);
+		}
+
+
+		$('.prev').click(function (e){
+			e.preventDefault();
+			currentPage--;
+			pageOperation(currentPage);
+		});
+
+
+		$('.next').click(function(e) {
+			e.preventDefault();
+			currentPage++;
+			pageOperation(currentPage);
+		});
+
+		$('.pages').click('a',function (e){
+
+			var pagElem = $(e.target);
+
+			e.preventDefault();
+			currentPage = pagElem.data('id');
+			pageOperation(currentPage);
+
+		});
+
+		function pageOperation(currentPage){
+
+			var index = pageNumberCollection.indexOf(currentPage);
+
+			if(index>beforeAfterCount && index < pageNumberCollection.length-beforeAfterCount-1){
+				group =[];
+
+				var frontFrom = index-beforeAfterCount;
+				var frontTo = index;
+				var frontNumbers = pageNumberCollection.slice(frontFrom,frontTo);
+				var backFrom = index+1;
+				var backTo = backFrom+beforeAfterCount;
+				var backNumbers = pageNumberCollection.slice(backFrom,backTo);
+
+				frontNumbers.forEach(function (number){
+					group.push(number);
+				});
+				group.push(currentPage);
+				backNumbers.forEach(function (number){
+					group.push(number);
+				});
+
+				$('.prev').show();
+				$('.next').show();
+			}
+
+			else{
+				if(index <= beforeAfterCount){
+					group = pageNumberCollection.slice(0,numberOfpagesDisplay);
+					
+					$('.prev').show();
+					if(index==0){
+						$('.prev').hide();
+					}
+				}else{
+					group = pageNumberCollection.slice(-numberOfpagesDisplay);
+					
+					$('.next').show();
+					if(index==pageNumberCollection.length-1){
+						$('.next').hide();	
+					}
+				}
+			}
+
+			$('.pages').empty();
+			group.forEach(function (number){
+				if(number === currentPage ){
+					active="active";
+				}else{
+					active ="";
+				}
+				$('.pages').append('<li><a data-id="'+number+'" class="'+active+'" >'+number+'</a></li>');
+			});
+
+		}
+
+
+		pageOperation(1);
+
+	</script>
+
+</body>
+</html>
